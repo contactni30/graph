@@ -1,0 +1,166 @@
+package kruskal1;
+
+public class Graph {
+
+	static class Node{
+		char ch;
+		int rank;
+		Node parent;
+	}
+	
+	static class Edge{
+		char src;
+		char dest;
+		int weight;
+	}
+	
+	public static void main(String args[]) {
+		int noOfEdge = 14;
+		int noOfVertex = 9;
+		
+		Edge edge[] = new Edge[noOfEdge];
+		Node node[] = new Node[noOfVertex];
+		
+		for(int i=0;i<noOfEdge;i++) {
+			edge[i] = new Edge();
+		}
+		
+		for(int i=0;i<noOfVertex;i++) {
+			node[i] = new Node();			
+			node[i].ch = (char)(97+i);
+			node[i].parent = node[i];
+			node[i].rank = 0;
+		}
+		
+		edge[0].src = 'a';
+		edge[0].dest = 'b';
+		edge[0].weight = 4;
+		
+		edge[1].src = 'b';
+		edge[1].dest = 'c';
+		edge[1].weight = 8;
+		
+		edge[2].src = 'c';
+		edge[2].dest = 'd';
+		edge[2].weight = 7;
+		
+		edge[3].src = 'd';
+		edge[3].dest = 'e';
+		edge[3].weight = 9;
+		
+		edge[4].src = 'e';
+		edge[4].dest = 'f';
+		edge[4].weight = 10;
+		
+		edge[5].src = 'f';
+		edge[5].dest = 'g';
+		edge[5].weight = 2;
+		
+		edge[6].src = 'g';
+		edge[6].dest = 'h';
+		edge[6].weight = 1;
+		
+		edge[7].src = 'h';
+		edge[7].dest = 'a';
+		edge[7].weight = 8;
+		
+		edge[8].src = 'h';
+		edge[8].dest = 'b';
+		edge[8].weight = 11;
+		
+		edge[9].src = 'h';
+		edge[9].dest = 'i';
+		edge[9].weight = 7;
+		
+		edge[10].src = 'i';
+		edge[10].dest = 'g';
+		edge[10].weight = 6;
+		
+		edge[11].src = 'i';
+		edge[11].dest = 'c';
+		edge[11].weight = 2;
+		
+		edge[12].src = 'c';
+		edge[12].dest = 'f';
+		edge[12].weight = 4;
+		
+		edge[13].src = 'd';
+		edge[13].dest = 'f';
+		edge[13].weight = 14;
+		
+		Graph graph = new Graph();
+		graph.quickSort(edge,0,noOfEdge-1);
+		
+		
+		
+		for(int i=0;i<noOfEdge;i++) {
+			Node a = graph.findNode(node,edge[i].src);
+			Node b = graph.findNode(node,edge[i].dest);
+			Node x = graph.findSet(a);
+			Node y = graph.findSet(b);
+			
+			if(x.ch != y.ch) {
+				graph.union(x, y);
+				System.out.println("Edge added : "+a.ch+" , "+b.ch);
+			}
+		}
+		
+	}
+	
+	public Node findNode(Node[] node, char x) {
+		Node res = null;
+		for(int i=0;i<node.length;i++) {
+			if(node[i].ch == x) {
+				res = node[i];
+			}
+		}
+		return res;
+	}
+	
+	public void union(Node x, Node y) {
+		if(x.rank > y.rank) {
+			y.parent = x;
+		}else {
+			x.parent = y;
+			if(x.rank == y.rank) {
+				y.rank = y.rank + 1;
+			}
+		}
+	}
+	
+	// Path compression heuristic 
+	public Node findSet(Node node) {
+		if(node.parent!=node) {
+			node.parent = findSet(node.parent);
+		}
+		return node.parent;
+	}
+	
+	public void quickSort(Edge[] edge, int start, int end) {
+		if(start<end) {
+			int p = partition(edge,start,end);
+			quickSort(edge,start,p-1);
+			quickSort(edge,p+1,end);
+		}
+	}
+	
+	public int partition(Edge[] edge, int start, int end) {
+		Edge pEdge = edge[end];
+		int k = start - 1;
+		for(int i=start;i<end;i++) {
+			if(edge[i].weight < pEdge.weight) {
+				k++;
+				Edge temp = edge[i];
+				edge[i] = edge[k];
+				edge[k] = temp;
+			}
+		}
+		k++;
+		Edge temp = edge[end];
+		edge[end] = edge[k];
+		edge[k] = temp;
+		return k;
+	}
+	
+	
+}
