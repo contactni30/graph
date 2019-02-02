@@ -1,0 +1,81 @@
+package bfs;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
+public class Graph {
+
+	static class Vertex{
+		int num;
+		String color;
+		Vertex parent;
+	}
+	
+	int num;
+	static Vertex vertex[];
+	static LinkedList<Integer> adj[];
+	static Queue<Vertex> queue = new LinkedList<Vertex>();
+	
+	Graph(int num){
+		this.num = num;
+		vertex = new Vertex[num];
+		adj = new LinkedList[num];
+		
+		for(int i=0;i<num;i++) {
+			vertex[i] = new Vertex();
+			adj[i] = new LinkedList<Integer>();
+		}
+	}
+	
+	public void addEdge(int x, int y) {
+		adj[x].add(y);
+	}
+	
+	public static void main(String args[]) {
+		int n = 4;
+		Graph g = new Graph(n);
+		g.addEdge(0, 1); 
+	    g.addEdge(0, 2); 
+	    g.addEdge(1, 2); 
+	    g.addEdge(2, 0); 
+	    g.addEdge(2, 3); 
+	    g.addEdge(3, 3);
+	    
+	    for(int i=0;i<n;i++) {
+	    	vertex[i].color = "WHITE";
+	    	vertex[i].num = i;
+	    	vertex[i].parent = null;
+	    }
+	    
+	    vertex[2].color = "GRAY";
+	    vertex[2].parent = vertex[2];
+	    queue.add(vertex[2]);
+	    
+	    bfs();
+	}
+	
+	public static void bfs() {
+		while(queue.size()!=0) {
+			Vertex ver = queue.poll();
+			for(int i:adj[ver.num]){
+				if(vertex[i].color == "WHITE") {
+					vertex[i].color = "GRAY";
+					vertex[i].parent = ver;
+					queue.add(vertex[i]);
+				}
+			}
+			System.out.println(ver.num);
+		}
+	}
+}
+
+
+/*
+Correct answer 
+2
+0
+3
+1
+*/
