@@ -1,0 +1,90 @@
+package topologicalSort2;
+
+import java.util.LinkedList;
+import java.util.Stack;
+
+public class Graph {
+
+	static class Vertex{
+		String color;
+		int num;
+		Vertex parent;
+	}
+	
+	int num;
+	static Vertex vertex[];
+	static LinkedList<Integer> adj[];
+	static Stack<Vertex> stack = new Stack<Vertex>();
+	static Stack<Vertex> res = new Stack<Vertex>();
+	
+	Graph(int num){
+		this.num = num;
+		vertex = new Vertex[num];
+		adj = new LinkedList[num];
+		for(int i=0;i<num;i++) {
+			vertex[i] = new Vertex();
+			adj[i] = new LinkedList<Integer>();
+		}
+	}
+	
+	
+	public void addEdge(int x, int y) {
+		adj[x].add(y);
+	}
+	
+	public static void main(String args[]) {
+		int n = 6;
+		Graph g = new Graph(n);
+		g.addEdge(5, 2); 
+	    g.addEdge(5, 0); 
+	    g.addEdge(4, 0); 
+	    g.addEdge(4, 1); 
+	    g.addEdge(2, 3); 
+	    g.addEdge(3, 1); 
+	  
+	    for(int i=0;i<n;i++) {
+	    	vertex[i].color  = "WHITE";
+	    	vertex[i].num = i;
+	    	vertex[i].parent = null;
+	    }
+	    
+	    for(int i=0;i<n;i++) {
+	    	if(vertex[i].color == "WHITE") {
+	    		stack.push(vertex[i]);
+	    		dfs();
+	    	}
+	    }
+	    
+	    while(res.size()!=0) {
+	    	System.out.println(res.pop().num);
+	    }
+	    
+	}
+	
+	
+	public static void dfs() {
+		Vertex ver = stack.pop();
+		ver.color = "GRAY";
+		
+		
+		for(int i:adj[ver.num]) {
+			if(vertex[i].color == "WHITE") {
+				vertex[i].parent = ver;
+				stack.push(vertex[i]);
+				dfs();
+			}
+		}
+		res.push(ver);
+	}
+	
+}
+
+/*
+Correct answer :
+5
+4
+2
+3
+1
+0
+*/
