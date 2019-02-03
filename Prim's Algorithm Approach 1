@@ -1,0 +1,97 @@
+package prim2;
+
+import java.util.LinkedList;
+
+public class Graph {
+
+	static class Vertex{
+		int key;
+		int num;
+		Vertex parent;
+		String color;
+	}
+	
+	int noOfVertex;
+	static Vertex vertex[];
+	static LinkedList<Integer[]> adj[];
+	static int k = 0;
+	
+	Graph(int noOfVertex){
+		this.noOfVertex = noOfVertex;
+		vertex = new Vertex[noOfVertex];
+		adj = new LinkedList[noOfVertex];
+		
+		for(int i=0;i<noOfVertex;i++) {
+			vertex[i] = new Vertex();
+			adj[i] = new LinkedList<Integer[]>();
+		}
+	}
+	
+	public void addEdge(int x, int y, int weight) {
+		adj[x].add(new Integer[]{y,weight});
+		adj[y].add(new Integer[]{x,weight});		
+	}
+	
+	public static void main(String args[]) {
+		int n = 9;
+		Graph g = new Graph(n);
+		g.addEdge(0, 1, 4);
+		g.addEdge(1, 2, 8);
+		g.addEdge(2, 3, 7);
+		g.addEdge(3, 4, 9);
+		g.addEdge(4, 5, 10);
+		g.addEdge(5, 6, 2);
+		g.addEdge(6, 7, 1);
+		g.addEdge(7, 0, 8);
+		g.addEdge(1, 7, 11);
+		g.addEdge(7, 8, 7);
+		g.addEdge(8, 2, 2);
+		g.addEdge(8, 6, 6);
+		g.addEdge(2, 5, 4);
+		g.addEdge(3, 5, 14);
+		
+		for(int i=0;i<n;i++) {
+			vertex[i].color = "WHITE";
+			vertex[i].key = Integer.MAX_VALUE;
+			vertex[i].num = i;
+			vertex[i].parent = null;
+		}
+		
+		vertex[0].key = 0;
+		
+		int k = n;
+		
+		while(k!=0) {
+			k--;
+			Vertex ver = g.findMinKeyVertex();
+			ver.color = "GRAY";
+			if(ver.parent!=null) {
+				System.out.println("Edge added -> "+ver.num+"  "+ver.parent.num);
+			}
+			ver.key = Integer.MAX_VALUE;
+			
+			for(Integer[] i:adj[ver.num]) {
+				if(vertex[i[0]].color=="WHITE") {
+					if(i[1]<vertex[i[0]].key) {
+						vertex[i[0]].key = i[1];
+						vertex[i[0]].parent = ver;
+					}
+				}
+			}
+		}
+	}
+	
+	
+	public Vertex findMinKeyVertex() {
+		int len = vertex.length;
+		Vertex ver = null;
+		int min = Integer.MAX_VALUE;
+		for(int i=0;i<len;i++) {
+			if(vertex[i].key<min) {
+				min = vertex[i].key;
+				ver = vertex[i];
+			}
+		}
+		return ver;
+	}
+}
