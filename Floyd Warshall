@@ -1,0 +1,37 @@
+package floydWarshall;
+
+public class Graph {
+
+	static int noOfVertex;
+	
+	public static void main(String args[]) {
+		noOfVertex = 4;
+		int[][] matrix = new int[][] {{0,5,Integer.MAX_VALUE,10},
+									{Integer.MAX_VALUE,0,3,Integer.MAX_VALUE},
+									{Integer.MAX_VALUE,Integer.MAX_VALUE,0,1},
+									{Integer.MAX_VALUE,Integer.MAX_VALUE,Integer.MAX_VALUE,0}};
+									
+									
+									
+		for(int k=0;k<noOfVertex;k++) {
+			for(int i=0;i<noOfVertex;i++) {
+				for(int j=0;j<noOfVertex;j++) {
+					if(matrix[i][k]!=Integer.MAX_VALUE && matrix[k][j]!=Integer.MAX_VALUE) {
+						matrix[i][j] = Math.min(matrix[i][j], matrix[i][k]+matrix[k][j]);
+					}
+				}
+			}
+		}
+		
+		
+		for(int i=0;i<noOfVertex;i++) {
+			for(int j=0;j<noOfVertex;j++) {
+				if(matrix[i][j]==Integer.MAX_VALUE)
+					System.out.print("INF" +"\t");
+				else
+					System.out.print(matrix[i][j]+"\t");
+			}
+			System.out.println();
+		}
+	}
+}
