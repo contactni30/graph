@@ -1,0 +1,36 @@
+package transitiveClosure;
+
+public class Graph {
+
+	static int noOfVertex;
+	
+	public static void main(String args[]) {
+		noOfVertex = 4;
+		int[][] matrix = new int[][]{ {1, 1, 0, 1}, 
+            {0, 1, 1, 0}, 
+            {0, 0, 1, 1}, 
+            {0, 0, 0, 1} 
+          };
+          
+          
+        for(int k=0;k<noOfVertex;k++) {
+        	for(int i=0;i<noOfVertex;i++) {
+        		for(int j=0;j<noOfVertex;j++) {
+        			if(matrix[i][k]==1 && matrix[k][j]==1) {
+        				matrix[i][j] = 1;
+        			}
+        		}
+        	}
+        }
+        
+        
+        
+        
+        for(int i=0;i<noOfVertex;i++) {
+        	for(int j=0;j<noOfVertex;j++) {
+        		System.out.print(matrix[i][j]+" ");
+        	}
+        	System.out.println();
+        }
+	}
+}
