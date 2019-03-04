@@ -1,0 +1,176 @@
+package dijkstra;
+
+import java.util.*;
+
+
+public class Graph {
+
+	static class Vertex{
+		int num;
+		int d;
+		String color;
+		Vertex parent;
+	}
+	
+	static class Node{
+		int dest;
+		int weight;
+		Node(int dest, int weight){
+			this.dest = dest;
+			this.weight = weight;
+		}
+	}
+	
+	int noOfVertex;
+	static Vertex vertex[];
+	static LinkedList<Node> adj[];
+	static Vertex queue[];
+	static int heapSize = -1;
+	
+	Graph(int noOfVertex){
+		this.noOfVertex = noOfVertex;
+		vertex = new Vertex[noOfVertex];
+		adj = new LinkedList[noOfVertex];
+		queue = new Vertex[noOfVertex];
+		for(int i=0;i<noOfVertex;i++) {
+			vertex[i] = new Vertex();
+			adj[i] = new LinkedList<Node>();
+		}
+	}
+	
+	
+	public void addEdge(int src, int dest, int weight) {
+		adj[src].add(new Node(dest,weight));
+	}
+	
+	public static void main(String args[]) {
+		Graph g = new Graph(5);
+		g.addEdge(0, 1, 10);
+		g.addEdge(1, 2, 1);
+		g.addEdge(2, 4, 4);
+		g.addEdge(4, 2, 6);
+		g.addEdge(3, 4, 2);
+		g.addEdge(0, 3, 5);
+		g.addEdge(4, 0, 7);
+		g.addEdge(3, 2, 9);
+		g.addEdge(1, 3, 2);
+		g.addEdge(3, 1, 3);
+		
+		for(int i=0;i<g.noOfVertex;i++) {
+			vertex[i].num = i;
+			vertex[i].d = Integer.MAX_VALUE;
+			vertex[i].color = "WHITE";
+			vertex[i].parent = null;
+		}
+		
+		vertex[0].d = 0;
+		
+		for(int i=0;i<g.noOfVertex;i++) {
+			insert(vertex[i]);
+		}
+		
+		int k = g.noOfVertex;
+		
+		while(k!=0) {
+			k--;
+			Vertex ver = extractMin();
+			ver.color = "GRAY";
+			
+			if(ver.parent!=null) {
+				System.out.println("Edge added : "+ ver.parent.num +"  "+ver.num);
+			}
+			
+			for(Node node : adj[ver.num]) {
+				if(vertex[node.dest].color=="WHITE") {
+					relax(ver,vertex[node.dest],node.weight);
+				}
+			}
+			
+		}
+	}
+	
+	public static void relax(Vertex src, Vertex dest, int weight) {
+		if(dest.d > src.d + weight) {
+			decreaseKey(findKey(dest.num),src.d+weight);
+			dest.parent = src;
+		}
+	}
+	
+	public static int findKey(int x) {
+		int key = -1;
+		for(int i=0;i<=heapSize;i++) {
+			if(queue[i].num == x) {
+				key = i;
+				break;
+			}
+		}
+		return key;
+	}
+	
+	public static void insert(Vertex ver) {
+		heapSize = heapSize + 1;
+		queue[heapSize] = ver;
+		int m = ver.d;
+		queue[heapSize].d  = Integer.MAX_VALUE;
+		decreaseKey(heapSize,m);
+	}
+	
+	public static void decreaseKey(int index, int value) {
+		queue[index].d = value;
+		
+		int parent = findParent(index);
+		
+		while(index>0 && queue[parent].d > queue[index].d) {
+			Vertex ver = queue[parent];
+			queue[parent] = queue[index];
+			queue[index] = ver;
+			index = parent;
+			parent = findParent(parent);
+		}
+	}
+	
+	public static int findParent(int index) {
+		int parent = -1;
+		if(index%2 == 0) {
+			parent = index/2 - 1;
+		}else {
+			parent = index/2;
+		}
+		return parent;
+	}
+	
+	public static Vertex extractMin() {
+		Vertex ver = null;
+		
+		if(heapSize<0) {
+			System.out.println("Underflow error");
+		}else {
+			ver = queue[0];
+			queue[0] = queue[heapSize];
+			heapSize = heapSize - 1;
+			heapSort(0);
+		}
+		return ver;
+	}
+	
+	public static void heapSort(int root) {
+		int left = 2*root + 1;
+		int right = 2*root + 2;
+		int minimum = root;
+		
+		if(left<=heapSize && queue[minimum].d > queue[left].d) {
+			minimum = left;
+		}
+		
+		if(right<=heapSize && queue[minimum].d > queue[right].d) {
+			minimum = right;
+		}
+		
+		if(minimum!=root) {
+			Vertex ver = queue[root];
+			queue[root] = queue[minimum];
+			queue[minimum] = ver;
+			heapSort(minimum);
+		}
+	}
+}
